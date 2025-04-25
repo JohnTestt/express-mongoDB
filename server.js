@@ -13,11 +13,7 @@ app.use(express.json());
 
 //mongoDB connection
 const mongoURI = process.env.MONGO_URI; //  URI arquivo env
-mongoose
-  .connect(mongoURI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
+mongoose.connect(mongoURI)
   .then(() => console.log("MongoDB connected"))
   .catch((err) => console.log("Error ao conectar com o MongoDB: ", err));
 
