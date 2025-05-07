@@ -5,19 +5,32 @@ const router = express.Router();
 
 // Route to create a new patient
 
+// router.post('/pacientes', async (req, res) => {
+//     const { name, mail, phone, age } = req.body;
+
+//     try {
+//         const {name, mail, age, phone} = req.body;
+//         const newPaciente = new Paciente({ name, mail, phone, age  });
+//         await newPaciente.save();
+
+//     } catch (error) {
+//         res.status(400).json({ message: " error the create pacient", error });
+//     }
+// }
+// );
+
 router.post('/pacientes', async (req, res) => {
     const { name, mail, phone, age } = req.body;
-
     try {
-        const {name, mail, age, phone} = req.body;
-        const newPaciente = new Paciente({ name, mail, phone, age  });
-        await newPaciente.save();
-
+      const newPaciente = new Paciente({ name, mail, phone, age });
+      await newPaciente.save();
+ 
+   // Retorna um status 201 e o objeto criado
+    return res.status(201).json(newPaciente);
     } catch (error) {
-        res.status(400).json({ message: " error the create pacient", error });
+      return res.status(400).json({ message: "Error creating patient", error });
     }
-}
-);
+  });
 // Route to get all patients
 
 router.get('/pacientes', async (req, res) =>  {
