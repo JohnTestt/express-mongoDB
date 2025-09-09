@@ -15,6 +15,7 @@ app.use("/api", pacienteRoutes);
 
 //mongoDB connection
 const mongoURI = process.env.MONGO_URI; //  URI arquivo env
+
 mongoose.connect(mongoURI)
   .then(() => console.log("MongoDB connected"))
   .catch((err) => console.log("Error ao conectar com o MongoDB: ", err));
