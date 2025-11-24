@@ -21,7 +21,7 @@ const app = express();
 app.use(helmet());         // cabeçalhos de segurança   
 app.use(cookieParser());  // ler cookies (para httpOnly)
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:5000' , // substitua pela URL do seu frontend
+  origin: process.env.FRONTEND_URL || 'http://localhost:5173' , // substitua pela URL do seu frontend
   credentials: true, // habilita o envio de cookies
 }));
 
