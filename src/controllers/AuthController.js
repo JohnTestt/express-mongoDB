@@ -5,7 +5,7 @@ import cloudinary from '../config/cloudinary.js';
 import streamifier from 'streamifier';
 
 // Gera token JWT
-const createToken = (user) => jwt.sign({ id: user._id }, process.env.JWT_SECRET, { 
+const createToken = (userId) => jwt.sign({ id: userId }, process.env.JWT_SECRET, { 
 expiresIn: process.env.JWT_EXPIRES_IN || '7d' });
 
 // Helper para setar cookie httpOnly

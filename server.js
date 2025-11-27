@@ -21,9 +21,13 @@ const app = express();
 app.use(helmet());         // cabeçalhos de segurança   
 app.use(cookieParser());  // ler cookies (para httpOnly)
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:5173' , // substitua pela URL do seu frontend
-  credentials: true, // habilita o envio de cookies
+  origin: [
+    'http://localhost:5173',
+    'https://johntestt.github.io'
+  ],
+  credentials: true,
 }));
+
 
 //observação se helmete não funcionar, use:
 // app.use(
