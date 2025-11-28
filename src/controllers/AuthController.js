@@ -20,34 +20,99 @@ const setTokenCookie = (res, token) => {
 
 // Registrar usuário
 
+// export const register = async (req, res) => {
+// try {
+// const { name, email, password } = req.body;
+// if (!email || !password) return res.status(400).json({ message: 'Email e senha obrigatórios' });
+// const exists = await User.findOne({ email });
+// if (exists) return res.status(400).json({ message: 'Usuário já existe' });
+
+// const hashed = await bcrypt.hash(password, 10);
+// const user = await User.create({ name, email, password: hashed });
+
+//   // Gera token e seta cookie
+
+// const token = createToken(user._id);
+// setTokenCookie(res, token);
+
+// res.json({
+// message: "Login realizado com sucesso",
+// user: {
+// id: user._id,
+// name: user.name,
+// email: user.email,
+// avatar: user.avatar,
+// },
+// });
+// } catch (err) {
+// res.status(500).json({ message: err.message });
+// }
+// };
+
+// register tava dando varios erros, e não estava fzd o upload do avata , vamos tentar assim:
+
 export const register = async (req, res) => {
-try {
-const { name, email, password } = req.body;
-if (!email || !password) return res.status(400).json({ message: 'Email e senha obrigatórios' });
-const exists = await User.findOne({ email });
-if (exists) return res.status(400).json({ message: 'Usuário já existe' });
+  try {
+    const { name, email, password } = req.body;
 
-const hashed = await bcrypt.hash(password, 10);
-const user = await User.create({ name, email, password: hashed });
+    if (!email || !password)
+      return res.status(400).json({ message: "Email e senha obrigatórios" });
 
-  // Gera token e seta cookie
+    const exists = await User.findOne({ email });
+    if (exists)
+      return res.status(400).json({ message: "Usuário já existe" });
 
-const token = createToken(user._id);
-setTokenCookie(res, token);
+    const hashed = await bcrypt.hash(password, 10);
 
-res.json({
-message: "Login realizado com sucesso",
-user: {
-id: user._id,
-name: user.name,
-email: user.email,
-avatar: user.avatar,
-},
-});
-} catch (err) {
-res.status(500).json({ message: err.message });
-}
+    let avatarUrl = null;
+
+    // ======== SE ENVIOU IMAGEM, FAZ O UPLOAD ========
+    if (req.file) {
+      const streamUpload = (buffer) => {
+        return new Promise((resolve, reject) => {
+          const stream = cloudinary.uploader.upload_stream(
+            { folder: "avatars" },
+            (error, result) => {
+              if (result) resolve(result);
+              else reject(error);
+            }
+          );
+          streamifier.createReadStream(buffer).pipe(stream);
+        });
+      };
+
+      const result = await streamUpload(req.file.buffer);
+      avatarUrl = result.secure_url;
+    }
+
+    // ======== CRIA USER ========
+    const user = await User.create({
+      name,
+      email,
+      password: hashed,
+      avatar: avatarUrl,
+    });
+
+    // ======== Gera token + cookie ========
+    const token = createToken(user._id);
+    setTokenCookie(res, token);
+
+    res.json({
+      message: "Cadastro realizado com sucesso",
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        avatar: user.avatar,
+      },
+    });
+
+  } catch (err) {
+    console.error("REGISTER ERROR:", err);
+    res.status(500).json({ message: err.message });
+  }
 };
+
 
 // Login usuário
 

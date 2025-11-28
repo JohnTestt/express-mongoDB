@@ -7,7 +7,12 @@ const upload = multer({ storage: multer.memoryStorage() });
 
 const router = express.Router();
 
-router.post('/register', register);
+//router.post('/register', register);
+// tava dando erro no registro, vamos tentar assim
+
+router.post('/register', upload.single("avatar"), register);
+
+
 router.post('/login', login);
 //router.get('/me', protect, me); // se usar header-token
 router.get('/me', protectCookie, me); // se usar cookie
