@@ -186,5 +186,30 @@ res.clearCookie('token', { httpOnly: true, sameSite: 'none', secure: process.env
 res.json({ message: 'Logged out' });
 };
 
+//troca de sennha
+
+export const changePassword = async (req, res) => {
+  try {
+    const { oldPassword, newPassword } = req.body;
+
+    if (!oldPassword || !newPassword)
+      return res.status(400).json({ message: "Campos obrigatórios" });
+
+    const user = req.user;
+
+    const valid = await bcrypt.compare(oldPassword, user.password);
+    if (!valid)
+      return res.status(400).json({ message: "Senha atual incorreta" });
+
+    user.password = await bcrypt.hash(newPassword, 10);
+    await user.save();
+
+    res.json({ message: "Senha alterada com sucesso" });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+
 
 
